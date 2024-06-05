@@ -1,4 +1,7 @@
 const express = require("express");
+const { secp256k1 } = require("ethereum-cryptography/secp256k1");
+const { keccak256 } = require("ethereum-cryptography/keccak");
+const { utf8ToBytes,toHex } = require("ethereum-cryptography/utils");
 const app = express();
 const cors = require("cors");
 const port = 3042;
@@ -8,9 +11,9 @@ app.use(cors());
 app.use(express.json());
 
 const balances = {
-  "03074f04b21767f7376ceea6d3d9423110f5327b23bb4bb4b936cb55d457261d98": 100,
-  "03ff6c168d7e2fc442e23d3cc6ae8a61de77fa4da48c9f87478e366d338fd1d506": 50,
-  "022fff1d0c98785ef613dc7ffc984ca0863fa48a4acabdcbe36d6b64d5701edb34": 75,
+  "039f6a8a021aa66ca6db6883f01fc6229eb8b97236b5a39b43a808e35d2e404abe": 100, //dan
+  "02e90431f2dd89944d6cfdced37fa43ac034c05337540bc547383bf2ed28b74600": 50, //bob
+  "0335bd54145d1a629e5d7d494c8aa68617dff0f87571018e8314d6706893e654fd": 75, //alice
 };
 
 app.get("/balance/:address", (req, res) => {
@@ -20,11 +23,27 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
-  const { sender, recipient, amount } = req.body;
+  const { sender, recipient, amount,sig, message} = req.body;
+  const { r, s, recovery } = sig;
+
+  const bytes = utf8ToBytes(message);
+  const messageHash = keccak256(bytes);
+  console.log('messageHash is',messageHash)
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
 
+  const signature = new secp256k1.Signature(BigInt(r), BigInt(s), recovery);
+console.log(signature)
+
+  const publicKey = signature.recoverPublicKey(messageHash).toHex();
+console.log('publicKey is',publicKey);
+console.log('sender is: ',sender)
+
+  if (publicKey !== sender) {
+    return res.status(400).send({ message: "Invalid signature!" });
+  }
+  
   if (balances[sender] < amount) {
     res.status(400).send({ message: "Not enough funds!" });
   } else {

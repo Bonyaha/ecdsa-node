@@ -1,7 +1,6 @@
 const express = require("express");
 const { secp256k1 } = require("ethereum-cryptography/secp256k1");
-const { keccak256 } = require("ethereum-cryptography/keccak");
-const { utf8ToBytes,toHex } = require("ethereum-cryptography/utils");
+const { hexToBytes } = require("ethereum-cryptography/utils");
 const app = express();
 const cors = require("cors");
 const port = 3042;
@@ -23,12 +22,12 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
-  const { sender, recipient, amount,sig, message} = req.body;
+  const { sender, recipient, amount,sig, messageHash} = req.body;
   const { r, s, recovery } = sig;
 
-  const bytes = utf8ToBytes(message);
-  const messageHash = keccak256(bytes);
-  console.log('messageHash is',messageHash)
+  const messageHashBytes = hexToBytes(messageHash);
+ 
+  console.log('messageHash is',messageHashBytes)
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
@@ -36,7 +35,7 @@ app.post("/send", (req, res) => {
   const signature = new secp256k1.Signature(BigInt(r), BigInt(s), recovery);
 console.log(signature)
 
-  const publicKey = signature.recoverPublicKey(messageHash).toHex();
+  const publicKey = signature.recoverPublicKey(messageHashBytes).toHex();
 console.log('publicKey is',publicKey);
 console.log('sender is: ',sender)
 

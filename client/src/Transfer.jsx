@@ -19,7 +19,8 @@ function Transfer({ address, setBalance,privateKey }) {
     const message = `${address}:${recipient}:${sendAmount}`;
     const bytes = utf8ToBytes(message);
     const messageHash = keccak256(bytes);
-    const sig = secp256k1.sign(messageHash, privateKey);
+    const messageHashHex = toHex(messageHash); // Convert to hex
+    const sig = secp256k1.sign(messageHashHex, privateKey);
 
     console.log('sig is: ',sig)
     console.log('message is: ', messageHash);
@@ -36,7 +37,7 @@ function Transfer({ address, setBalance,privateKey }) {
           s: sig.s.toString(),
           recovery: sig.recovery
         },
-        message
+        messageHash:messageHashHex
       });
       setBalance(balance);
     } catch (ex) {

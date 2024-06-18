@@ -1,25 +1,28 @@
 import server from "./server";
-import { secp256k1 } from "ethereum-cryptography/secp256k1.js";
+import { keccak256 } from "ethereum-cryptography/keccak.js";
 import { toHex } from "ethereum-cryptography/utils.js";
+import { useState } from "react";
 
-function Wallet({ address, setAddress, balance, setBalance,privateKey,setPrivateKey }) {
-  
+function Wallet({ address,setAddress,balance, setBalance}) {  
+  const [publicKey, setPublicKey] = useState("");
+
   async function onChange(evt) {
-    const privateKey = evt.target.value;
-    setPrivateKey(privateKey);
-    const address = toHex(secp256k1.getPublicKey(privateKey))
-    console.log(address)
-    setAddress(address)
-    if (privateKey) {
-      let {data} = await server.get(`balance/${address}`);
-      console.log('rawData is: ',data)
-      const {
-        data: { balance },
-      } = await server.get(`balance/${address}`);
+    const publicKey = evt.target.value;
+    setPublicKey(publicKey);    
+    
+    if (publicKey) {
+      setAddress(publicKey);
+      const {data:{balance}} = await server.get(`balance/${publicKey}`);
       setBalance(balance);
     } else {
       setBalance(0);
     }
+  }
+
+  function clearFields() {
+    setPublicKey("");
+    setAddress("");
+    setBalance(0);
   }
 
   return (
@@ -27,14 +30,15 @@ function Wallet({ address, setAddress, balance, setBalance,privateKey,setPrivate
       <h1>Your Wallet</h1>
 
       <label>
-        Private key
-        <input placeholder="Type in a private key" value={privateKey} onChange={onChange}></input>
+        Public key
+        <input placeholder="Type in a public key" value={publicKey} onChange={onChange}></input>
       </label>
       <div>
         Address: {address.slice(0,10)}...
       </div>
 
       <div className="balance">Balance: {balance}</div>
+      <button className="button" onClick={clearFields}>Clear</button>
     </div>
   );
 }

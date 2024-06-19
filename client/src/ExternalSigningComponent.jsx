@@ -8,7 +8,17 @@ function ExternalSigningComponent({ message,onSignature }) {
 
 
   console.log('message is: ',message)
+
   const handleSign = () => {
+    const privateKeyInput = document.getElementById('private-key-input');
+    if (!privateKey) {
+      privateKeyInput.setCustomValidity("Private key is required.");
+      privateKeyInput.reportValidity();
+      return;
+    }
+
+    //privateKeyInput.setCustomValidity(""); // Clear any previous custom error
+
     const bytes = utf8ToBytes(message);
     const messageHash = keccak256(bytes);
     const sig = secp256k1.sign(messageHash, privateKey);
@@ -25,16 +35,18 @@ function ExternalSigningComponent({ message,onSignature }) {
   return (
     <div className="container">
       <h1>External Signing Tool</h1>
-      <label>
-        Private Key
-        <input
-          type="text"
-          placeholder="Type in a private key"
-          value={privateKey}
-          onChange={(e) => setPrivateKey(e.target.value)}
-        />
-      </label>
-      <label>
+     <form onSubmit={handleSign}>
+        <label>
+          Private Key
+          <input
+            type="text"
+            placeholder="Type in a private key"
+            value={privateKey}
+            onChange={(e) => setPrivateKey(e.target.value)}
+            required
+          />
+        </label>
+        <label>
         Message
         <input
           type="text"
@@ -43,7 +55,8 @@ function ExternalSigningComponent({ message,onSignature }) {
           onChange={(e) => setMessage(e.target.value)}
         />
       </label>
-      <button onClick={handleSign}>Sign Message</button>
+        <button type="submit" className="button">Sign Message</button>
+      </form>
     </div>
   );
 }

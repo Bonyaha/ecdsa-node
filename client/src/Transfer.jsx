@@ -7,7 +7,7 @@ import ExternalSigningComponent from "./ExternalSigningComponent";
 import Modal from "./Modal";
 
 
-  function Transfer({ address, setBalance }) {
+  function Transfer({ address, setBalance, setNotification }) {
     const [sendAmount, setSendAmount] = useState("");
     const [recipient, setRecipient] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,15 +72,18 @@ import Modal from "./Modal";
       setSendAmount("");
       setRecipient("");
       setSignature(null);
+
+      setNotification("Transfer successful!", "success");
     } catch (ex) {
       //alert(ex.response.data.message);
       console.log(ex)
+      setNotification("Transfer failed. Please try again.", "error");
     }
   }
 
   return (
-    <div>
-      <form className="container transfer" onSubmit={transfer}>
+    <div className="container transfer">
+      <form  onSubmit={transfer}>
         <h1>Send Transaction</h1>
         <label>
           Send Amount
@@ -98,7 +101,7 @@ import Modal from "./Modal";
             onChange={setValue(setRecipient)}
           ></input>
         </label>
-        <input type="submit" className="button" value="Transfer" />
+        <input type="submit" className="button" value={signature ? "Transfer" :"Make a signing"}/>
       </form>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ExternalSigningComponent

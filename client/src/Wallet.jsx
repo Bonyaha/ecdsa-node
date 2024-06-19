@@ -27,18 +27,20 @@ function Wallet({ address,setAddress,balance, setBalance}) {
 
   return (
     <div className="container wallet">
+      <div>
       <h1>Your Wallet</h1>
 
       <label>
         Public key
         <input placeholder="Type in a public key" value={publicKey} onChange={onChange}></input>
       </label>
-      <div>
+      <label>
         Address: {address.slice(0,10)}...
-      </div>
+      </label>
 
       <div className="balance">Balance: {balance}</div>
-      <button className="button" onClick={clearFields}>Clear</button>
+      <button className="button-small" onClick={clearFields}>Clear</button>      
+      </div>
     </div>
   );
 }

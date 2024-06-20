@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { secp256k1 } from "ethereum-cryptography/secp256k1.js";
 import { keccak256 } from "ethereum-cryptography/keccak.js";
-import { utf8ToBytes, toHex } from "ethereum-cryptography/utils.js";
+import { utf8ToBytes } from "ethereum-cryptography/utils.js";
 
 const ExternalSigningComponent = ({ message,onSignature }) => {
   const [privateKey, setPrivateKey] = useState("");
 
 
-  console.log('message is: ',message)
+  //console.log('message is: ',message)
 
   const handleSign = () => {
     const bytes = utf8ToBytes(message);
@@ -41,7 +41,6 @@ const ExternalSigningComponent = ({ message,onSignature }) => {
         Message
         <input
           type="text"
-          placeholder="Type in a message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />

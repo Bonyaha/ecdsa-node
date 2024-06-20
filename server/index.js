@@ -34,11 +34,11 @@ app.post("/send", (req, res) => {
   setInitialBalance(recipient);
 
   const signature = new secp256k1.Signature(BigInt(r), BigInt(s), recovery);
-console.log(signature)
+    console.log(signature)
 
   const publicKey = signature.recoverPublicKey(messageHash).toHex();
-console.log('publicKey is',publicKey);
-console.log('sender is: ',sender)
+    console.log('publicKey is',publicKey);
+    console.log('sender is: ',sender)
 
   if (publicKey !== sender) {
     return res.status(400).send({ message: "Invalid signature!" });

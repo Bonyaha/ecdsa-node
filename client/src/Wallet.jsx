@@ -2,7 +2,7 @@ import { useState } from "react";
 import server from "./server";
 
 
-const Wallet = ({ address,setAddress,balance, setBalance}) => {  
+const Wallet = ({ address,setAddress,balance,setBalance}) => {  
   const [publicKey, setPublicKey] = useState("");
 
   const onChange = async (evt) => {

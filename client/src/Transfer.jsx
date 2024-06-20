@@ -6,11 +6,10 @@ import Modal from "./Modal";
 
   const Transfer = ({ address, setBalance, setNotification }) => {
     const [sendAmount, setSendAmount] = useState("");
-    const [recipient, setRecipient] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [recipient, setRecipient] = useState("");    
     const [signature, setSignature] = useState(null);
     const [transactionId] = useState(Math.random().toString(36).substring(2));
-    
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
   //console.log('address is: ',address)
   //console.log('recipient is: ', recipient)
@@ -51,7 +50,7 @@ import Modal from "./Modal";
         sig: signature,
         message
       });
-      console.log('balance is: ',balance)
+      //console.log('balance is: ',balance)
       setBalance(balance);
 
       // Clear the fields after successful transfer

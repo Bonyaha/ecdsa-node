@@ -23,12 +23,12 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
-  const { sender, recipient, amount,sig, messageHash} = req.body;
+  const { sender, recipient, amount,sig, message} = req.body;
   const { r, s, recovery } = sig;
 
-  const messageHashBytes = hexToBytes(messageHash);
- 
-  console.log('messageHash is',messageHashBytes)
+  const bytes = utf8ToBytes(message);
+  const messageHash = keccak256(bytes);
+  console.log('messageHash is',messageHash)
 
   setInitialBalance(sender);
   setInitialBalance(recipient);

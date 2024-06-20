@@ -33,14 +33,7 @@ const ExternalSigningComponent = ({ message,onSignature }) => {
      <form onSubmit={handleSign}>
         <label>
           Private Key
-          {/* <input
-            type="password"
-            placeholder="Type in a private key"
-            value={privateKey}
-            onChange={(e) => setPrivateKey(e.target.value)}
-            required
-          /> */}
-          <div style={{ position: "relative" }}>
+           <div style={{ position: "relative" }}>
             <input
               type={showPrivateKey ? "text" : "password"}
               placeholder="Type in a private key"
@@ -63,13 +56,8 @@ const ExternalSigningComponent = ({ message,onSignature }) => {
           </div>
         </label>
         
-        <div className="balance">Message:{message.slice(0,10)}...</div>
-        {/* <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        /> */}
-      
+        <div>Message: {message.slice(0,10)}...</div>
+             
         <button type="submit" className="button">Sign Message</button>
       </form>
     </div>

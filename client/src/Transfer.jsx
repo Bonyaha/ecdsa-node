@@ -67,7 +67,8 @@ import Modal from "./Modal";
   }
   const clearFields = () => {
     setSendAmount("");
-    setRecipient("");    
+    setRecipient("");
+    setSignature(null);  
   }
 
   return (

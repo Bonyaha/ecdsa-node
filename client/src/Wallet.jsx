@@ -33,10 +33,7 @@ const Wallet = ({ address,setAddress,balance,setBalance}) => {
         Public key
         <input placeholder="Type in a public key" value={publicKey} onChange={onChange}></input>
       </label>
-      <label>
-        Address: {address.slice(0,10)}...
-      </label>
-
+      
       <div className="balance">Balance: {balance}</div>
       <button className="button-small" onClick={clearFields}>Clear</button>      
       </div>

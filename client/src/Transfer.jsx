@@ -1,30 +1,45 @@
 import { useState } from "react";
 import server from "./server";
-import { secp256k1 } from "ethereum-cryptography/secp256k1.js";
-import { keccak256 } from "ethereum-cryptography/keccak.js";
-import { utf8ToBytes, toHex } from "ethereum-cryptography/utils.js";
+import ExternalSigningComponent from "./ExternalSigningComponent";
+import Modal from "./Modal";
 
 
+  const Transfer = ({ address, setBalance, setNotification }) => {
+    const [sendAmount, setSendAmount] = useState("");
+    const [recipient, setRecipient] = useState("");    
+    const [signature, setSignature] = useState(null);
+    const [transactionId] = useState(Math.random().toString(36).substring(2));
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-function Transfer({ address, setBalance,privateKey }) {
-  const [sendAmount, setSendAmount] = useState("");
-  const [recipient, setRecipient] = useState("");
+  //console.log('address is: ',address)
+  //console.log('recipient is: ', recipient)
+  //console.log('signature is: ',signature)
+  //console.log('message is: ',message)
 
-  console.log('address is: ',address)
+
   const setValue = (setter) => (evt) => setter(evt.target.value);
+  const message = `${address}:${recipient}:${sendAmount}:${transactionId}`;
 
-  async function transfer(evt) {
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSignature = (sig) => {
+    setSignature(sig);
+    handleCloseModal();
+  };
+
+ const transfer =  async (evt) => {
     evt.preventDefault();
-
-    const message = `${address}:${recipient}:${sendAmount}`;
-    const bytes = utf8ToBytes(message);
-    const messageHash = keccak256(bytes);
-    const messageHashHex = toHex(messageHash); // Convert to hex
-    const sig = secp256k1.sign(messageHashHex, privateKey);
-
-    console.log('sig is: ',sig)
-    console.log('message is: ', messageHash);
-
+    
+    if (!signature && address) {
+      handleOpenModal();
+      return;
+    }
     try {
       const {
         data: { balance },
@@ -32,45 +47,71 @@ function Transfer({ address, setBalance,privateKey }) {
         sender: address,
         amount: parseInt(sendAmount),
         recipient,
-        sig: {
-          r: sig.r.toString(),
-          s: sig.s.toString(),
-          recovery: sig.recovery
-        },
-        messageHash:messageHashHex
+        sig: signature,
+        message
       });
+      //console.log('balance is: ',balance)
       setBalance(balance);
+
+      // Clear the fields after successful transfer
+      setSendAmount("");
+      setRecipient("");
+      setSignature(null);
+
+      setNotification("Transfer successful!", "success");
     } catch (ex) {
-      //alert(ex.response.data.message);
-      console.log(ex)
+      console.log(ex);
+      const errorMessage = ex.response?.data?.message;
+      if (errorMessage === "Invalid signature!") {
+        setNotification("You used the wrong private key. Try again with another key.", "error");
+      } else {
+        const defaultErrorMessage = address
+          ? "Transfer failed. Please try again."
+          : "Please, fill in the public key field in your wallet";
+        setNotification(defaultErrorMessage, "error");
+      }
     }
+  }
+  const clearFields = () => {
+    setSendAmount("");
+    setRecipient("");
+    setSignature(null);  
   }
 
   return (
-    <form className="container transfer" onSubmit={transfer}>
-      <h1>Send Transaction</h1>
-
-      <label>
-        Send Amount
-        <input
-          placeholder="1, 2, 3..."
-          value={sendAmount}
-          onChange={setValue(setSendAmount)}
-        ></input>
-      </label>
-
-      <label>
-        Recipient
-        <input
-          placeholder="Type an address, for example: 0x2"
-          value={recipient}
-          onChange={setValue(setRecipient)}
-        ></input>
-      </label>
-
-      <input type="submit" className="button" value="Transfer" />
-    </form>
+    <div className="container transfer">
+      <form  onSubmit={transfer}>
+        <h1>Send Transaction</h1>
+        <label>
+          Send Amount
+          <input
+            placeholder="1, 2, 3..."
+            value={sendAmount}
+            onChange={setValue(setSendAmount)}
+            required
+          ></input>
+        </label>
+        <label>
+          Recipient
+          <input
+            placeholder="Type an address, for example: 0x2"
+            value={recipient}
+            onChange={setValue(setRecipient)}
+            required
+          ></input>
+        </label>
+        <input type="submit" className="button" value={signature ? "Transfer" :"Make a signing"}/>
+        <button className="button-small" onClick={clearFields}>Clear</button> 
+      </form>
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <ExternalSigningComponent
+          message={message}
+          onSignature={handleSignature}          
+        />
+      </Modal>
+    </div>
   );
+
 }
 
 export default Transfer;

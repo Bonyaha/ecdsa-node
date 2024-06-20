@@ -1,6 +1,7 @@
 const express = require("express");
 const { secp256k1 } = require("ethereum-cryptography/secp256k1");
-const { hexToBytes } = require("ethereum-cryptography/utils");
+const { keccak256 } = require("ethereum-cryptography/keccak");
+const { utf8ToBytes } = require("ethereum-cryptography/utils");
 const app = express();
 const cors = require("cors");
 const port = 3042;
@@ -33,11 +34,11 @@ app.post("/send", (req, res) => {
   setInitialBalance(recipient);
 
   const signature = new secp256k1.Signature(BigInt(r), BigInt(s), recovery);
-console.log(signature)
+    console.log(signature)
 
-  const publicKey = signature.recoverPublicKey(messageHashBytes).toHex();
-console.log('publicKey is',publicKey);
-console.log('sender is: ',sender)
+  const publicKey = signature.recoverPublicKey(messageHash).toHex();
+    console.log('publicKey is',publicKey);
+    console.log('sender is: ',sender)
 
   if (publicKey !== sender) {
     return res.status(400).send({ message: "Invalid signature!" });

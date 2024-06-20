@@ -1,25 +1,40 @@
-import Wallet from "./Wallet";
-import Transfer from "./Transfer";
-import "./App.scss";
 import { useState } from "react";
 
-function App() {
+import Wallet from "./Wallet";
+import Transfer from "./Transfer";
+import Notification from "./Notification";
+import "./App.scss";
+
+
+const App = () => {
   const [balance, setBalance] = useState(0);
   const [address, setAddress] = useState("");
-  const [privateKey,setPrivateKey] = useState("")
+  const [notification, setNotification] = useState({ message: "", type: "" });
+
+ 
+  const handleNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification({ message: "", type: "" }), 3000);
+  };
 
   return (
+    <>
     <div className="app">
       <Wallet
-        balance={balance}
-        privateKey={privateKey}
-        setPrivateKey={setPrivateKey}
+        balance={balance}        
         setBalance={setBalance}
         address={address}
         setAddress={setAddress}
       />
-      <Transfer setBalance={setBalance} address={address} privateKey={privateKey}/>
+      
+     <Transfer
+        address={address}
+        setBalance={setBalance}        
+        setNotification={handleNotification}
+    />      
     </div>
+    <Notification message={notification.message} type={notification.type} />
+    </>
   );
 }
 

@@ -65,6 +65,10 @@ import Modal from "./Modal";
       setNotification(errorMessage, "error");
     }
   }
+  const clearFields = () => {
+    setSendAmount("");
+    setRecipient("");    
+  }
 
   return (
     <div className="container transfer">
@@ -89,6 +93,7 @@ import Modal from "./Modal";
           ></input>
         </label>
         <input type="submit" className="button" value={signature ? "Transfer" :"Make a signing"}/>
+        <button className="button-small" onClick={clearFields}>Clear</button> 
       </form>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ExternalSigningComponent

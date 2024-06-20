@@ -59,10 +59,17 @@ import Modal from "./Modal";
       setSignature(null);
 
       setNotification("Transfer successful!", "success");
-    } catch (ex) {      
-      console.log(ex)
-      const errorMessage = address ? "Transfer failed. Please try again." : "Please, fill in public key field in your wallet";
-      setNotification(errorMessage, "error");
+    } catch (ex) {
+      console.log(ex);
+      const errorMessage = ex.response?.data?.message;
+      if (errorMessage === "Invalid signature!") {
+        setNotification("You used the wrong private key. Try again with another key.", "error");
+      } else {
+        const defaultErrorMessage = address
+          ? "Transfer failed. Please try again."
+          : "Please, fill in the public key field in your wallet";
+        setNotification(defaultErrorMessage, "error");
+      }
     }
   }
   const clearFields = () => {

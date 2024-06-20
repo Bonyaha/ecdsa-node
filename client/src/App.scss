@@ -144,6 +144,14 @@ button {
   display: flex;
   flex-direction: column;
 }
+.signing {
+  display: flex;
+  max-width: 1400px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 auto;
+  background-color: #80cc90;
+}
 
 /* Notification */
 .notification {

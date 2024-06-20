@@ -3,22 +3,13 @@ import { secp256k1 } from "ethereum-cryptography/secp256k1.js";
 import { keccak256 } from "ethereum-cryptography/keccak.js";
 import { utf8ToBytes, toHex } from "ethereum-cryptography/utils.js";
 
-function ExternalSigningComponent({ message,onSignature }) {
+const ExternalSigningComponent = ({ message,onSignature }) => {
   const [privateKey, setPrivateKey] = useState("");
 
 
   console.log('message is: ',message)
 
   const handleSign = () => {
-    const privateKeyInput = document.getElementById('private-key-input');
-    if (!privateKey) {
-      privateKeyInput.setCustomValidity("Private key is required.");
-      privateKeyInput.reportValidity();
-      return;
-    }
-
-    //privateKeyInput.setCustomValidity(""); // Clear any previous custom error
-
     const bytes = utf8ToBytes(message);
     const messageHash = keccak256(bytes);
     const sig = secp256k1.sign(messageHash, privateKey);
@@ -33,8 +24,8 @@ function ExternalSigningComponent({ message,onSignature }) {
   };
 
   return (
-    <div className="container">
-      <h1>External Signing Tool</h1>
+    <div className="container signing">
+      <h1>Signing Tool</h1>
      <form onSubmit={handleSign}>
         <label>
           Private Key

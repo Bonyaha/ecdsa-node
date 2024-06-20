@@ -1,13 +1,12 @@
+import { useState } from "react";
+
 import Wallet from "./Wallet";
 import Transfer from "./Transfer";
-import ExternalSigningComponent from "./ExternalSigningComponent";
-import Modal from "./Modal";
 import Notification from "./Notification";
 import "./App.scss";
 
-import { useState } from "react";
 
-function App() {
+const App = () => {
   const [balance, setBalance] = useState(0);
   const [address, setAddress] = useState("");
   const [notification, setNotification] = useState({ message: "", type: "" });

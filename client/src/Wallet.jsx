@@ -1,12 +1,11 @@
-import server from "./server";
-import { keccak256 } from "ethereum-cryptography/keccak.js";
-import { toHex } from "ethereum-cryptography/utils.js";
 import { useState } from "react";
+import server from "./server";
 
-function Wallet({ address,setAddress,balance, setBalance}) {  
+
+const Wallet = ({ address,setAddress,balance, setBalance}) => {  
   const [publicKey, setPublicKey] = useState("");
 
-  async function onChange(evt) {
+  const onChange = async (evt) => {
     const publicKey = evt.target.value;
     setPublicKey(publicKey);    
     
@@ -19,7 +18,7 @@ function Wallet({ address,setAddress,balance, setBalance}) {
     }
   }
 
-  function clearFields() {
+  const clearFields = () => {
     setPublicKey("");
     setAddress("");
     setBalance(0);

@@ -1,7 +1,7 @@
 import React from "react";
 
 
-function Notification({ message, type }) {
+const Notification = ({ message, type }) => {
   if (!message) return null;
 
   return (

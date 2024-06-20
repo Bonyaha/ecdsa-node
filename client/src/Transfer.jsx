@@ -1,13 +1,10 @@
 import { useState } from "react";
 import server from "./server";
-import { secp256k1 } from "ethereum-cryptography/secp256k1.js";
-import { keccak256 } from "ethereum-cryptography/keccak.js";
-import { utf8ToBytes, toHex } from "ethereum-cryptography/utils.js";
 import ExternalSigningComponent from "./ExternalSigningComponent";
 import Modal from "./Modal";
 
 
-  function Transfer({ address, setBalance, setNotification }) {
+  const Transfer = ({ address, setBalance, setNotification }) => {
     const [sendAmount, setSendAmount] = useState("");
     const [recipient, setRecipient] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,9 +12,9 @@ import Modal from "./Modal";
     const [transactionId] = useState(Math.random().toString(36).substring(2));
     
 
-  console.log('address is: ',address)
-  console.log('recipient is: ', recipient)
-  console.log('signature is: ',signature)
+  //console.log('address is: ',address)
+  //console.log('recipient is: ', recipient)
+  //console.log('signature is: ',signature)
   //console.log('message is: ',message)
 
 
@@ -37,24 +34,13 @@ import Modal from "./Modal";
     handleCloseModal();
   };
 
-  async function transfer(evt) {
+ const transfer =  async (evt) => {
     evt.preventDefault();
-
     
-    if (!signature) {
+    if (!signature && address) {
       handleOpenModal();
       return;
     }
-
-    /* const message = `${address}:${recipient}:${sendAmount}`;
-    console.log('raw message is: ', message)
-    const bytes = utf8ToBytes(message);
-    const messageHash = keccak256(bytes);
-    const sig = secp256k1.sign(messageHash, privateKey);
-
-    console.log('sig is: ',sig)
-    console.log('message is: ', messageHash);
- */
     try {
       const {
         data: { balance },
@@ -74,10 +60,10 @@ import Modal from "./Modal";
       setSignature(null);
 
       setNotification("Transfer successful!", "success");
-    } catch (ex) {
-      //alert(ex.response.data.message);
+    } catch (ex) {      
       console.log(ex)
-      setNotification("Transfer failed. Please try again.", "error");
+      const errorMessage = address ? "Transfer failed. Please try again." : "Please, fill in public key field in your wallet";
+      setNotification(errorMessage, "error");
     }
   }
 
@@ -91,6 +77,7 @@ import Modal from "./Modal";
             placeholder="1, 2, 3..."
             value={sendAmount}
             onChange={setValue(setSendAmount)}
+            required
           ></input>
         </label>
         <label>
@@ -99,6 +86,7 @@ import Modal from "./Modal";
             placeholder="Type an address, for example: 0x2"
             value={recipient}
             onChange={setValue(setRecipient)}
+            required
           ></input>
         </label>
         <input type="submit" className="button" value={signature ? "Transfer" :"Make a signing"}/>
@@ -106,8 +94,7 @@ import Modal from "./Modal";
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ExternalSigningComponent
           message={message}
-          onSignature={handleSignature}
-          
+          onSignature={handleSignature}          
         />
       </Modal>
     </div>
